@@ -1,0 +1,3 @@
+rootProject.name = "RecyclerViewUtilsAndroidLibrary"
+include ':app'
+include ':RecyclerViewUtilsAndroid'
