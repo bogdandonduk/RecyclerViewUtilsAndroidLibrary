@@ -7,18 +7,18 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 
 interface RecyclerViewHost {
-    var containedListsMap: MutableMap<String, RecyclerView>
 
     fun <T : RecyclerView.Adapter<out RecyclerView.ViewHolder>> initializeList(
         recyclerView: RecyclerView,
         adapter: T,
-        tag: String,
+        tag: String? = null,
+        persistableHost: RecyclerViewPersistableHost? = null,
         layoutManager: RecyclerView.LayoutManager? = null,
         changeAnimationsEnabled: Boolean = false,
         canReuseUpdatedViewHolder: Boolean = true
     ) {
         with(recyclerView) {
-            containedListsMap[tag] = this
+            if(tag != null && persistableHost != null) persistableHost.addListToMap(tag, recyclerView)
 
             if(layoutManager != null) this.layoutManager = layoutManager
 
@@ -39,21 +39,10 @@ interface RecyclerViewHost {
     fun <T : RecyclerView.Adapter<out RecyclerView.ViewHolder>> updateLists(vararg adapters: T) {
         adapters.forEach {
             CoroutineScope(Main).launch {
-                for(i in 0 until it!!.itemCount) {
+                for(i in 0 until it.itemCount) {
                     it.notifyItemChanged(i)
                 }
             }
         }
-    }
-
-    fun addListToMap(tag: String, list: RecyclerView, override: Boolean = false) {
-        if(override || !containedListsMap.containsKey(tag))
-            containedListsMap[tag] = list
-    }
-
-    fun getListFromMap(tag: String) = containedListsMap[tag]
-
-    fun removeFromListMap(tag: String) {
-        containedListsMap.remove(tag)
     }
 }
