@@ -15,6 +15,20 @@ interface RecyclerViewPersistableHost {
 
     fun getListStateFromMap(tag: String) = containedListsMap[tag]?.savedState
 
+    fun restoreSavedStateToList(tag: String) {
+        containedListsMap[tag]?.run {
+            list.layoutManager?.onRestoreInstanceState(savedState)
+        }
+    }
+
+    fun restoreSavedStateToAllLists() {
+        containedListsMap.forEach { (_, list) ->
+            list.run {
+                this.list.layoutManager?.onRestoreInstanceState(this.savedState)
+            }
+        }
+    }
+
     fun saveListStateInMap(tag: String) {
         containedListsMap[tag]?.savedState = containedListsMap[tag]?.list?.layoutManager?.onSaveInstanceState()
     }
