@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 interface RecyclerViewHost {
     var containedListsMap: MutableMap<String, RecyclerView>
 
-    fun <T : RecyclerView.Adapter<RecyclerView.ViewHolder>> initializeList(
+    fun <T : RecyclerView.Adapter<out RecyclerView.ViewHolder>> initializeList(
         recyclerView: RecyclerView,
         adapter: T,
         tag: String,
@@ -36,7 +36,7 @@ interface RecyclerViewHost {
         }
     }
 
-    fun <T : RecyclerView.Adapter<RecyclerView.ViewHolder>> updateLists(vararg adapters: T) {
+    fun <T : RecyclerView.Adapter<out RecyclerView.ViewHolder>> updateLists(vararg adapters: T) {
         adapters.forEach {
             CoroutineScope(Main).launch {
                 for(i in 0 until it!!.itemCount) {
