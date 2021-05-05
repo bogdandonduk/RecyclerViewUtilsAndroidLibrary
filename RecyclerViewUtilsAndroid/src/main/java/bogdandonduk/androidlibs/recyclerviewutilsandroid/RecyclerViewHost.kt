@@ -7,22 +7,36 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 
 interface RecyclerViewHost {
-    fun initializeList(
+    var containedListsMap: MutableMap<String, RecyclerView>
+
+    fun <T : RecyclerView.Adapter<RecyclerView.ViewHolder>> initializeList(
         recyclerView: RecyclerView,
-        adapter: RecyclerView.Adapter<RecyclerView.ViewHolder>,
+        adapter: T,
+        tag: String,
         layoutManager: RecyclerView.LayoutManager? = null,
-        changeAnimationsEnabled: Boolean = false
+        changeAnimationsEnabled: Boolean = false,
+        canReuseUpdatedViewHolder: Boolean = true
     ) {
         with(recyclerView) {
+            containedListsMap[tag] = this
+
             if(layoutManager != null) this.layoutManager = layoutManager
 
             this.adapter = adapter
 
-            (itemAnimator as DefaultItemAnimator).supportsChangeAnimations = changeAnimationsEnabled
+            itemAnimator = object : DefaultItemAnimator() {
+                override fun canReuseUpdatedViewHolder(viewHolder: RecyclerView.ViewHolder): Boolean {
+                    return canReuseUpdatedViewHolder
+                }
+            }
+
+            (itemAnimator as DefaultItemAnimator).run {
+                supportsChangeAnimations = changeAnimationsEnabled
+            }
         }
     }
 
-    fun updateList(vararg adapters: RecyclerView.Adapter<RecyclerView.ViewHolder>?) {
+    fun <T : RecyclerView.Adapter<RecyclerView.ViewHolder>> updateLists(vararg adapters: T) {
         adapters.forEach {
             CoroutineScope(Main).launch {
                 for(i in 0 until it!!.itemCount) {
@@ -30,5 +44,16 @@ interface RecyclerViewHost {
                 }
             }
         }
+    }
+
+    fun addListToMap(tag: String, list: RecyclerView, override: Boolean = false) {
+        if(override || !containedListsMap.containsKey(tag))
+            containedListsMap[tag] = list
+    }
+
+    fun getListFromMap(tag: String) = containedListsMap[tag]
+
+    fun removeFromListMap(tag: String) {
+        containedListsMap.remove(tag)
     }
 }
