@@ -11,15 +11,11 @@ interface RecyclerViewHost {
     fun <T : RecyclerView.Adapter<out RecyclerView.ViewHolder>> initializeList(
         recyclerView: RecyclerView,
         adapter: T,
-        tag: String? = null,
-        persistableHost: RecyclerViewPersistableHost? = null,
         layoutManager: RecyclerView.LayoutManager? = null,
         changeAnimationsEnabled: Boolean = false,
         canReuseUpdatedViewHolder: Boolean = true
     ) {
         with(recyclerView) {
-            if(tag != null && persistableHost != null) persistableHost.addListToMap(tag, recyclerView)
-
             if(layoutManager != null) this.layoutManager = layoutManager
 
             this.adapter = adapter
