@@ -1,10 +1,6 @@
 package bogdandonduk.androidlibs.recyclerviewutilsandroid
 
-import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.launch
 
 interface RecyclerViewHost {
 
@@ -15,30 +11,10 @@ interface RecyclerViewHost {
         changeAnimationsEnabled: Boolean = false,
         canReuseUpdatedViewHolder: Boolean = true
     ) {
-        with(recyclerView) {
-            if(layoutManager != null) this.layoutManager = layoutManager
-
-            this.adapter = adapter
-
-            itemAnimator = object : DefaultItemAnimator() {
-                override fun canReuseUpdatedViewHolder(viewHolder: RecyclerView.ViewHolder): Boolean {
-                    return canReuseUpdatedViewHolder
-                }
-            }
-
-            (itemAnimator as DefaultItemAnimator).run {
-                supportsChangeAnimations = changeAnimationsEnabled
-            }
-        }
+        RecyclerViewUtilsService.initializeList(recyclerView, adapter, layoutManager, changeAnimationsEnabled, canReuseUpdatedViewHolder)
     }
 
-    fun <T : RecyclerView.Adapter<out RecyclerView.ViewHolder>> updateLists(vararg adapters: T) {
-        adapters.forEach {
-            CoroutineScope(Main).launch {
-                for(i in 0 until it.itemCount) {
-                    it.notifyItemChanged(i)
-                }
-            }
-        }
+    fun <T : RecyclerView.Adapter<out RecyclerView.ViewHolder>> updateLists(adapters: MutableList<T>) {
+        RecyclerViewUtilsService.updateLists(adapters)
     }
 }
