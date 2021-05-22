@@ -6,7 +6,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-object RecyclerViewUtilsService {
+object RecyclerViewUtils {
     fun <T : RecyclerView.Adapter<out RecyclerView.ViewHolder>> initializeList(
         recyclerView: RecyclerView,
         adapter: T,

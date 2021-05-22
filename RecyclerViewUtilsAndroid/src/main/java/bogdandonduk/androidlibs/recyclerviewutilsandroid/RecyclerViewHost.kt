@@ -11,10 +11,10 @@ interface RecyclerViewHost {
         changeAnimationsEnabled: Boolean = false,
         canReuseUpdatedViewHolder: Boolean = true
     ) {
-        RecyclerViewUtilsService.initializeList(recyclerView, adapter, layoutManager, changeAnimationsEnabled, canReuseUpdatedViewHolder)
+        RecyclerViewUtils.initializeList(recyclerView, adapter, layoutManager, changeAnimationsEnabled, canReuseUpdatedViewHolder)
     }
 
     fun <T : RecyclerView.Adapter<out RecyclerView.ViewHolder>> updateLists(adapters: MutableList<T>) {
-        RecyclerViewUtilsService.updateLists(adapters)
+        RecyclerViewUtils.updateLists(adapters)
     }
 }

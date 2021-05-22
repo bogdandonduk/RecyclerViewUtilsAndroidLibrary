@@ -1,5 +1,3 @@
 package bogdandonduk.androidlibs.recyclerviewutilsandroid
 
-object RecyclerViewUtilsExtensionVocabulary {
-
-}
+object RecyclerViewUtilsExtensionVocabulary
